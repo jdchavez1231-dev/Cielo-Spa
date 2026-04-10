@@ -62,21 +62,6 @@ const SERVICE_ICONS: Record<string, JSX.Element> = {
   ),
 };
 
-function useReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { el.classList.add('visible'); obs.disconnect(); } },
-      { threshold: 0.15 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return ref;
-}
-
 function RevealCard({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -97,21 +82,34 @@ function RevealCard({ children, delay = 0 }: { children: React.ReactNode; delay?
 }
 
 export default function Services() {
-  const headerRef = useReveal();
+  const headerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add('visible'); obs.disconnect(); } },
+      { threshold: 0.15 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const categories = [
-    { id: 'facial' as const,   label: 'Facial Treatments' },
+    { id: 'facial'   as const, label: 'Facial Treatments' },
     { id: 'advanced' as const, label: 'Advanced & Acne' },
-    { id: 'body' as const,     label: 'Body Sculpting' },
+    { id: 'body'     as const, label: 'Body Sculpting' },
   ];
 
   return (
-    <section id="services" className="py-24 px-6 md:px-16 bg-dark2">
+    <section id="services" className="py-24 px-6 md:px-16" style={{ background: '#EDD0CA' }}>
+      {/* Section header */}
       <div ref={headerRef} className="reveal text-center mb-16">
-        <p className="text-[0.62rem] tracking-[0.35em] uppercase text-gold mb-4">Our Treatments</p>
+        <p className="text-[0.62rem] tracking-[0.35em] uppercase mb-4" style={{ color: '#C9A84C' }}>
+          Our Treatments
+        </p>
         <div className="gold-divider"><span /><i /><span /></div>
-        <h2 className="font-serif font-light tracking-[0.04em] text-cream" style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)' }}>
-          Crafted for Your <em className="italic text-gold-light">Glow</em>
+        <h2 className="font-serif font-light tracking-[0.04em]" style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', color: '#3D2020' }}>
+          Crafted for Your <em className="italic" style={{ color: '#C9A84C' }}>Glow</em>
         </h2>
       </div>
 
@@ -120,7 +118,9 @@ export default function Services() {
         return (
           <div key={cat.id} className="max-w-6xl mx-auto mb-16 last:mb-0">
             <RevealCard>
-              <p className="text-[0.6rem] tracking-[0.3em] uppercase text-gold-dim mb-6">{cat.label}</p>
+              <p className="text-[0.6rem] tracking-[0.3em] uppercase mb-6" style={{ color: '#9A7070' }}>
+                {cat.label}
+              </p>
             </RevealCard>
             <div
               className="grid"
@@ -129,30 +129,38 @@ export default function Services() {
               {services.map((service, idx) => (
                 <RevealCard key={service.id} delay={idx * 80}>
                   <div
-                    className="group bg-dark3 p-10 border-t border-gold/15 relative overflow-hidden cursor-default transition-all duration-300 hover:bg-[#1f1e18] hover:border-gold/40"
-                    style={{ '--tw-shadow': 'none' } as React.CSSProperties}
+                    className="group relative overflow-hidden transition-all duration-300"
+                    style={{
+                      background: '#FDF4F2',
+                      borderTop: '1px solid rgba(200,132,124,0.25)',
+                      padding: '2.5rem 2rem',
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#FFF8F7'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#FDF4F2'; }}
                   >
-                    {/* Bottom gold sweep on hover */}
+                    {/* Bottom rose sweep on hover */}
                     <div
                       className="absolute bottom-0 left-0 right-0 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out origin-left"
-                      style={{ background: 'linear-gradient(to right, transparent, #C9A84C, transparent)' }}
+                      style={{ background: 'linear-gradient(to right, transparent, #C8847C, transparent)' }}
                     />
 
-                    <div className="w-10 h-10 mb-5 text-gold opacity-80">
+                    <div className="w-10 h-10 mb-5" style={{ color: '#C8847C', opacity: 0.85 }}>
                       {SERVICE_ICONS[service.id] ?? SERVICE_ICONS['rose-gold']}
                     </div>
 
-                    <h3 className="font-serif text-[1.35rem] font-normal text-cream mb-2 tracking-[0.04em]">
+                    <h3 className="font-serif text-[1.35rem] font-normal mb-2 tracking-[0.04em]" style={{ color: '#3D2020' }}>
                       {service.name}
                     </h3>
-                    <p className="text-[0.8rem] leading-[1.7] text-text-muted mb-6">
+                    <p className="text-[0.8rem] leading-[1.7] mb-6" style={{ color: '#9A7070' }}>
                       {service.description}
                     </p>
                     <div className="flex items-end justify-between">
-                      <span className="font-serif text-[1.1rem] text-gold-light tracking-[0.08em]">
+                      <span className="font-serif text-[1.1rem] tracking-[0.08em]" style={{ color: '#C9A84C' }}>
                         From ${service.price}
                       </span>
-                      <span className="text-[0.6rem] tracking-[0.2em] uppercase text-gold-dim">{service.duration}</span>
+                      <span className="text-[0.6rem] tracking-[0.2em] uppercase" style={{ color: '#9A7070' }}>
+                        {service.duration}
+                      </span>
                     </div>
                   </div>
                 </RevealCard>
@@ -165,25 +173,35 @@ export default function Services() {
       {/* Promo banner */}
       <section
         id="promo"
-        className="mt-20 -mx-6 md:-mx-16 py-16 px-6 text-center border-t border-b border-gold/20"
-        style={{ background: 'linear-gradient(135deg, #1A1508 0%, #0C0A04 50%, #1A1508 100%)' }}
+        className="mt-20 -mx-6 md:-mx-16 py-16 px-6 text-center"
+        style={{
+          background: 'linear-gradient(135deg, #F9EAE7 0%, #F2D8D3 50%, #F9EAE7 100%)',
+          borderTop: '1px solid rgba(200,132,124,0.3)',
+          borderBottom: '1px solid rgba(200,132,124,0.3)',
+        }}
       >
         <RevealCard>
-          <div className="inline-block border border-gold text-gold-light text-[0.65rem] tracking-[0.3em] uppercase px-6 py-2 mb-6">
+          <div
+            className="inline-block text-[0.65rem] tracking-[0.3em] uppercase px-6 py-2 mb-6"
+            style={{ border: '1px solid #C9A84C', color: '#C9A84C' }}
+          >
             Limited Time · New Clients Only
           </div>
-          <p className="font-serif font-light text-cream mb-1" style={{ fontSize: 'clamp(2rem, 5vw, 3.8rem)' }}>
+          <p className="font-serif font-light mb-1" style={{ fontSize: 'clamp(2rem, 5vw, 3.8rem)', color: '#3D2020' }}>
             First-Time Clients Receive
           </p>
-          <p className="font-serif italic text-gold-light leading-none mb-4" style={{ fontSize: 'clamp(3rem, 7vw, 6rem)' }}>
+          <p className="font-serif italic leading-none mb-4" style={{ fontSize: 'clamp(3rem, 7vw, 6rem)', color: '#C9A84C' }}>
             10% Off
           </p>
-          <p className="text-[0.78rem] tracking-[0.12em] text-text-muted mb-8">
+          <p className="text-[0.78rem] tracking-[0.12em] mb-8" style={{ color: '#9A7070' }}>
             Any treatment + FREE Lip Scrub Add-On &nbsp;·&nbsp; Limited Appointments
           </p>
           <Link
             to="/book"
-            className="inline-block px-10 py-4 bg-gold text-dark text-[0.72rem] tracking-[0.22em] uppercase font-medium no-underline transition-all duration-300 hover:bg-gold-light hover:-translate-y-0.5 hover:shadow-[0_6px_24px_rgba(201,168,76,0.25)]"
+            className="inline-block text-[0.72rem] tracking-[0.22em] uppercase font-medium no-underline transition-all duration-300"
+            style={{ background: '#C9A84C', color: '#FDF4F2', padding: '1rem 2.5rem' }}
+            onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#E2C97E'; el.style.transform = 'translateY(-2px)'; }}
+            onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#C9A84C'; el.style.transform = ''; }}
           >
             Claim This Offer
           </Link>

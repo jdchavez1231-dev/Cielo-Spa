@@ -1,21 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Appointment, Customer, SPA_SERVICES } from '@/src/types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
 import { Users, Calendar, TrendingUp, CheckCircle2, Clock, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function AdminDashboard() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [tab, setTab] = useState<'appointments' | 'customers'>('appointments');
 
   useEffect(() => {
-    const savedAppointments = JSON.parse(localStorage.getItem('spa_appointments') || '[]');
-    const savedCustomers = JSON.parse(localStorage.getItem('spa_customers') || '[]');
-    setAppointments(savedAppointments);
-    setCustomers(savedCustomers);
+    setAppointments(JSON.parse(localStorage.getItem('spa_appointments') || '[]'));
+    setCustomers(JSON.parse(localStorage.getItem('spa_customers') || '[]'));
   }, []);
 
   const deleteAppointment = (id: string) => {
@@ -30,146 +25,188 @@ export default function AdminDashboard() {
     localStorage.setItem('spa_appointments', JSON.stringify(updated));
   };
 
+  const revenue = appointments.reduce((acc, a) => {
+    return acc + (SPA_SERVICES.find(s => s.id === a.serviceId)?.price || 0);
+  }, 0);
+
   const stats = [
-    { name: 'Total Customers', value: customers.length, icon: Users, color: 'text-blue-600', bg: 'bg-blue-100' },
-    { name: 'Appointments', value: appointments.length, icon: Calendar, color: 'text-spa-gold', bg: 'bg-spa-pink/30' },
-    { name: 'Revenue', value: `$${appointments.reduce((acc, a) => {
-      const service = SPA_SERVICES.find(s => s.id === a.serviceId);
-      return acc + (service?.price || 0);
-    }, 0)}`, icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-100' },
+    { name: 'Total Customers', value: customers.length, icon: Users, color: '#C8847C', bg: 'rgba(200,132,124,0.12)' },
+    { name: 'Appointments',    value: appointments.length, icon: Calendar, color: '#C9A84C', bg: 'rgba(201,168,76,0.12)' },
+    { name: 'Revenue',         value: `$${revenue}`, icon: TrendingUp, color: '#6B9E7A', bg: 'rgba(107,158,122,0.12)' },
   ];
 
   return (
-    <section className="py-24 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 px-6 md:px-16 min-h-screen" style={{ background: '#F5E0DC' }}>
+      <div className="max-w-6xl mx-auto">
         <div className="mb-12">
-          <h2 className="text-4xl font-serif font-bold text-gray-900 mb-2">Admin Dashboard</h2>
-          <p className="text-gray-600">Track your customers and manage appointments.</p>
+          <p className="text-[0.62rem] tracking-[0.35em] uppercase mb-2" style={{ color: '#C9A84C' }}>
+            Management
+          </p>
+          <h2 className="font-serif font-light text-[2.5rem]" style={{ color: '#3D2020' }}>
+            Admin Dashboard
+          </h2>
+          <p className="text-[0.85rem] mt-2" style={{ color: '#9A7070' }}>
+            Track your customers and manage appointments.
+          </p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid sm:grid-cols-3 gap-6 mb-12">
+        {/* Stats */}
+        <div className="grid sm:grid-cols-3 gap-4 mb-10">
           {stats.map((stat) => (
-            <Card key={stat.name} className="border-none shadow-md">
-              <CardContent className="p-6 flex items-center space-x-4">
-                <div className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center`}>
-                  <stat.icon size={24} />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 font-medium">{stat.name}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                </div>
-              </CardContent>
-            </Card>
+            <div
+              key={stat.name}
+              className="flex items-center gap-4 p-6"
+              style={{ background: '#FDF4F2', border: '1px solid rgba(200,132,124,0.2)' }}
+            >
+              <div
+                className="w-12 h-12 flex items-center justify-center flex-shrink-0"
+                style={{ background: stat.bg, color: stat.color }}
+              >
+                <stat.icon size={22} />
+              </div>
+              <div>
+                <p className="text-[0.62rem] tracking-[0.2em] uppercase" style={{ color: '#9A7070' }}>{stat.name}</p>
+                <p className="font-serif text-2xl font-light mt-0.5" style={{ color: '#3D2020' }}>{stat.value}</p>
+              </div>
+            </div>
           ))}
         </div>
 
-        <Tabs defaultValue="appointments" className="w-full">
-          <TabsList className="bg-white p-1 rounded-full shadow-sm mb-8">
-            <TabsTrigger value="appointments" className="rounded-full px-8">Appointments</TabsTrigger>
-            <TabsTrigger value="customers" className="rounded-full px-8">Customers</TabsTrigger>
-          </TabsList>
+        {/* Tabs */}
+        <div className="flex mb-8" style={{ borderBottom: '1px solid rgba(200,132,124,0.2)' }}>
+          {(['appointments', 'customers'] as const).map(t => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className="text-[0.72rem] tracking-[0.2em] uppercase px-6 py-3 transition-all duration-300"
+              style={{
+                color: tab === t ? '#C8847C' : '#9A7070',
+                borderBottom: tab === t ? '2px solid #C8847C' : '2px solid transparent',
+                background: 'none',
+                cursor: 'pointer',
+                paddingBottom: '0.75rem',
+              }}
+            >
+              {t.charAt(0).toUpperCase() + t.slice(1)}
+            </button>
+          ))}
+        </div>
 
-          <TabsContent value="appointments">
-            <Card className="border-none shadow-lg">
-              <CardHeader>
-                <CardTitle>Recent Appointments</CardTitle>
-                <CardDescription>Manage your upcoming and past bookings.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[500px] pr-4">
-                  {appointments.length === 0 ? (
-                    <div className="text-center py-20 text-gray-400">
-                      <Calendar size={48} className="mx-auto mb-4 opacity-20" />
-                      <p>No appointments found yet.</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {appointments.sort((a, b) => b.date.localeCompare(a.date)).map((apt) => (
-                        <div key={apt.id} className="p-4 rounded-xl border border-gray-100 bg-white hover:border-spa-gold/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-10 h-10 bg-spa-pink/20 rounded-full flex items-center justify-center text-spa-gold">
-                              <Clock size={20} />
-                            </div>
-                            <div>
-                              <p className="font-bold text-gray-900">{apt.customerName}</p>
-                              <p className="text-sm text-spa-gold font-medium">{apt.serviceName}</p>
-                              <p className="text-xs text-gray-500">{apt.date} at {apt.time}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-                              apt.status === 'confirmed' ? 'bg-green-100 text-green-600' : 
-                              apt.status === 'pending' ? 'bg-yellow-100 text-yellow-600' : 
-                              'bg-gray-100 text-gray-600'
-                            }`}>
-                              {apt.status}
-                            </div>
-                            {apt.status === 'pending' && (
-                              <Button size="sm" variant="ghost" className="text-green-600 hover:bg-green-50" onClick={() => updateStatus(apt.id, 'confirmed')}>
-                                <CheckCircle2 size={18} />
-                              </Button>
-                            )}
-                            <Button size="sm" variant="ghost" className="text-red-600 hover:bg-red-50" onClick={() => deleteAppointment(apt.id)}>
-                              <Trash2 size={18} />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
+        {/* Content */}
+        <div style={{ background: '#FDF4F2', border: '1px solid rgba(200,132,124,0.2)', padding: '2rem' }}>
+          {tab === 'appointments' && (
+            <>
+              <p className="font-serif text-[1.3rem] font-light mb-1" style={{ color: '#3D2020' }}>Recent Appointments</p>
+              <p className="text-[0.78rem] mb-6" style={{ color: '#9A7070' }}>Manage your upcoming and past bookings.</p>
 
-          <TabsContent value="customers">
-            <Card className="border-none shadow-lg">
-              <CardHeader>
-                <CardTitle>Customer Directory</CardTitle>
-                <CardDescription>View and manage your client base.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[500px] pr-4">
-                  {customers.length === 0 ? (
-                    <div className="text-center py-20 text-gray-400">
-                      <Users size={48} className="mx-auto mb-4 opacity-20" />
-                      <p>No customers registered yet.</p>
-                    </div>
-                  ) : (
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {customers.map((customer) => (
-                        <div key={customer.id} className="p-4 rounded-xl border border-gray-100 bg-white hover:border-spa-gold/30 transition-all">
-                          <div className="flex items-center space-x-3 mb-3">
-                            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold">
-                              {customer.name.charAt(0)}
-                            </div>
-                            <div>
-                              <p className="font-bold text-gray-900">{customer.name}</p>
-                              <p className="text-xs text-gray-500">{customer.email}</p>
-                            </div>
-                          </div>
-                          <div className="space-y-1">
-                            <p className="text-sm text-gray-600 flex items-center">
-                              <span className="font-medium mr-2">Phone:</span> {customer.phone}
-                            </p>
-                            <div className="flex items-center">
-                              {customer.firstVisit && (
-                                <span className="text-[10px] bg-spa-pink/30 text-spa-gold px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">
-                                  New Client
-                                </span>
-                              )}
-                            </div>
-                          </div>
+              {appointments.length === 0 ? (
+                <div className="text-center py-20" style={{ color: '#9A7070' }}>
+                  <Calendar size={40} className="mx-auto mb-4 opacity-20" />
+                  <p className="text-[0.85rem]">No appointments yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {[...appointments].sort((a, b) => b.date.localeCompare(a.date)).map((apt) => (
+                    <div
+                      key={apt.id}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 transition-all"
+                      style={{ border: '1px solid rgba(200,132,124,0.15)', background: '#FFF8F7' }}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div
+                          className="w-10 h-10 flex items-center justify-center flex-shrink-0"
+                          style={{ background: 'rgba(200,132,124,0.12)', color: '#C8847C' }}
+                        >
+                          <Clock size={18} />
                         </div>
-                      ))}
+                        <div>
+                          <p className="font-medium text-[0.9rem]" style={{ color: '#3D2020' }}>{apt.customerName}</p>
+                          <p className="text-[0.78rem]" style={{ color: '#C9A84C' }}>{apt.serviceName}</p>
+                          <p className="text-[0.72rem]" style={{ color: '#9A7070' }}>{apt.date} at {apt.time}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="text-[0.65rem] tracking-[0.15em] uppercase px-3 py-1"
+                          style={{
+                            background: apt.status === 'confirmed' ? 'rgba(107,158,122,0.15)' : apt.status === 'pending' ? 'rgba(201,168,76,0.15)' : 'rgba(154,112,112,0.15)',
+                            color: apt.status === 'confirmed' ? '#6B9E7A' : apt.status === 'pending' ? '#C9A84C' : '#9A7070',
+                          }}
+                        >
+                          {apt.status}
+                        </span>
+                        {apt.status === 'pending' && (
+                          <button
+                            onClick={() => updateStatus(apt.id, 'confirmed')}
+                            className="w-8 h-8 flex items-center justify-center transition-colors"
+                            style={{ color: '#6B9E7A', background: 'none', border: 'none', cursor: 'pointer' }}
+                          >
+                            <CheckCircle2 size={18} />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => deleteAppointment(apt.id)}
+                          className="w-8 h-8 flex items-center justify-center transition-colors"
+                          style={{ color: '#C8847C', background: 'none', border: 'none', cursor: 'pointer' }}
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
                     </div>
-                  )}
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {tab === 'customers' && (
+            <>
+              <p className="font-serif text-[1.3rem] font-light mb-1" style={{ color: '#3D2020' }}>Customer Directory</p>
+              <p className="text-[0.78rem] mb-6" style={{ color: '#9A7070' }}>View and manage your client base.</p>
+
+              {customers.length === 0 ? (
+                <div className="text-center py-20" style={{ color: '#9A7070' }}>
+                  <Users size={40} className="mx-auto mb-4 opacity-20" />
+                  <p className="text-[0.85rem]">No customers yet.</p>
+                </div>
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {customers.map((customer) => (
+                    <div
+                      key={customer.id}
+                      className="p-5 transition-all"
+                      style={{ border: '1px solid rgba(200,132,124,0.15)', background: '#FFF8F7' }}
+                    >
+                      <div className="flex items-center gap-3 mb-3">
+                        <div
+                          className="w-10 h-10 flex items-center justify-center font-medium flex-shrink-0 text-sm"
+                          style={{ background: 'rgba(200,132,124,0.15)', color: '#C8847C' }}
+                        >
+                          {customer.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-medium text-[0.9rem]" style={{ color: '#3D2020' }}>{customer.name}</p>
+                          <p className="text-[0.72rem]" style={{ color: '#9A7070' }}>{customer.email}</p>
+                        </div>
+                      </div>
+                      <p className="text-[0.8rem] mb-2" style={{ color: '#6B4444' }}>
+                        <span className="font-medium">Phone:</span> {customer.phone}
+                      </p>
+                      {customer.firstVisit && (
+                        <span
+                          className="text-[0.6rem] tracking-[0.2em] uppercase px-2 py-0.5"
+                          style={{ background: 'rgba(201,168,76,0.15)', color: '#C9A84C' }}
+                        >
+                          New Client
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </section>
   );

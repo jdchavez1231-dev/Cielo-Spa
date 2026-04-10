@@ -7,98 +7,80 @@
   --font-sans: "Jost", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Cormorant Garamond", serif;
 
-  --color-gold:       #C9A84C;
-  --color-gold-light: #E2C97E;
-  --color-gold-dim:   #8A6A2A;
-  --color-cream:      #F7F1E8;
-  --color-dark:       #0C0C0C;
-  --color-dark2:      #141414;
-  --color-dark3:      #1C1C1C;
-  --color-text-light: #D4C8B8;
-  --color-text-muted: #7A7060;
+  /* ── Brand palette ── */
+  --color-blush:       #F5E0DC;
+  --color-blush-deep:  #EDD0CA;
+  --color-blush-card:  #FDF4F2;
+  --color-rose:        #C8847C;
+  --color-rose-deep:   #A05650;
+  --color-gold:        #C9A84C;
+  --color-gold-light:  #E2C97E;
+  --color-gold-dim:    #8A6A2A;
+  --color-brown:       #3D2020;
+  --color-brown-mid:   #6B4444;
+  --color-brown-muted: #9A7070;
+  --color-cream:       #FDF4F2;
 
-  /* legacy aliases so shadcn components keep working */
+  /* ── shadcn compat aliases ── */
   --color-spa-gold:  #C9A84C;
-  --color-spa-pink:  #E2C97E;
-  --color-spa-cream: #0C0C0C;
+  --color-spa-pink:  #F5E0DC;
+  --color-spa-cream: #FDF4F2;
 }
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --font-heading: var(--font-serif);
-  --color-background:   var(--background);
-  --color-foreground:   var(--foreground);
-  --color-border:       var(--border);
-  --color-input:        var(--input);
-  --color-ring:         var(--ring);
+  --color-background:           var(--background);
+  --color-foreground:           var(--foreground);
+  --color-border:               var(--border);
+  --color-input:                var(--input);
+  --color-ring:                 var(--ring);
   --color-primary:              var(--primary);
   --color-primary-foreground:   var(--primary-foreground);
   --color-secondary:            var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted:            var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent:            var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-card:            var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover:            var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
+  --color-muted:                var(--muted);
+  --color-muted-foreground:     var(--muted-foreground);
+  --color-accent:               var(--accent);
+  --color-accent-foreground:    var(--accent-foreground);
+  --color-destructive:          var(--destructive);
+  --color-card:                 var(--card);
+  --color-card-foreground:      var(--card-foreground);
+  --color-popover:              var(--popover);
+  --color-popover-foreground:   var(--popover-foreground);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
 }
 
 :root {
-  --background:   #0C0C0C;
-  --foreground:   #F7F1E8;
-  --card:         #1C1C1C;
-  --card-foreground: #F7F1E8;
-  --popover:      #1C1C1C;
-  --popover-foreground: #F7F1E8;
-  --primary:      #C9A84C;
-  --primary-foreground: #0C0C0C;
-  --secondary:    #141414;
-  --secondary-foreground: #F7F1E8;
-  --muted:        #1C1C1C;
-  --muted-foreground: #7A7060;
-  --accent:       #C9A84C;
-  --accent-foreground: #0C0C0C;
-  --destructive:  oklch(0.577 0.245 27.325);
-  --border:       rgba(201,168,76,0.15);
-  --input:        rgba(201,168,76,0.15);
-  --ring:         #C9A84C;
-  --radius:       0rem;
+  --background:          #F5E0DC;
+  --foreground:          #3D2020;
+  --card:                #FDF4F2;
+  --card-foreground:     #3D2020;
+  --popover:             #FDF4F2;
+  --popover-foreground:  #3D2020;
+  --primary:             #C8847C;
+  --primary-foreground:  #FDF4F2;
+  --secondary:           #EDD0CA;
+  --secondary-foreground:#3D2020;
+  --muted:               #EDD0CA;
+  --muted-foreground:    #9A7070;
+  --accent:              #C9A84C;
+  --accent-foreground:   #3D2020;
+  --destructive:         oklch(0.577 0.245 27.325);
+  --border:              rgba(200,132,124,0.25);
+  --input:               rgba(200,132,124,0.2);
+  --ring:                #C8847C;
+  --radius:              0rem;
 }
 
 @layer base {
   * { @apply border-border outline-ring/50; }
-  body { @apply bg-dark text-cream font-sans; overflow-x: hidden; }
+  body { @apply bg-blush text-brown font-sans; overflow-x: hidden; }
   h1, h2, h3, h4, h5, h6 { font-family: var(--font-serif); }
   html { scroll-behavior: smooth; }
-}
-
-/* ── Noise overlay ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.4;
-}
-
-/* ── Scroll reveal ── */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* ── Gold divider ornament ── */
@@ -112,10 +94,10 @@ body::before {
 .gold-divider span {
   flex: 1;
   height: 1px;
-  background: linear-gradient(to right, transparent, #8A6A2A);
+  background: linear-gradient(to right, transparent, #C9A84C);
 }
 .gold-divider span:last-child {
-  background: linear-gradient(to left, transparent, #8A6A2A);
+  background: linear-gradient(to left, transparent, #C9A84C);
 }
 .gold-divider i {
   width: 6px;
@@ -125,16 +107,26 @@ body::before {
   display: block;
 }
 
-/* ── Scroll indicator animation ── */
-@keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50%       { opacity: 1; }
+/* ── Scroll reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
 }
-.animate-pulse-slow { animation: pulse 2s ease-in-out infinite; }
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-/* ── Hero fade-up ── */
+/* ── Animations ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(30px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-up { animation: fadeUp 1.2s ease forwards; }
+
+@keyframes pulseSlow {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+.animate-pulse-slow { animation: pulseSlow 2s ease-in-out infinite; }
