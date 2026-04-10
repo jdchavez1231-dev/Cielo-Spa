@@ -1,94 +1,78 @@
-import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Sparkles, ArrowRight, Star } from 'lucide-react';
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-spa-pink/10 -skew-x-12 transform origin-top-right -z-10" />
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-spa-gold/5 rounded-full blur-3xl -z-10" />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-spa-pink/30 text-spa-gold text-xs font-bold uppercase tracking-widest mb-6">
-            <Sparkles size={14} />
-            <span>Beauty & Skin Care</span>
-          </div>
-          <h1 className="text-6xl md:text-8xl font-serif font-bold text-gray-900 leading-tight mb-6">
-            Reveal Your <br />
-            <span className="text-spa-gold italic">Natural Glow</span>
-          </h1>
-          <p className="text-lg text-gray-600 mb-10 max-w-lg leading-relaxed">
-            Experience the ultimate in luxury skincare and body sculpting. 
-            Our expert treatments are designed to rejuvenate your skin and 
-            enhance your natural beauty.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button asChild size="lg" className="bg-spa-gold hover:bg-spa-gold/90 text-white rounded-full px-8 py-6 text-lg">
-              <Link to="/book" className="flex items-center space-x-2">
-                <span>Book Appointment</span>
-                <ArrowRight size={18} />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="border-spa-gold text-spa-gold hover:bg-spa-gold/10 rounded-full px-8 py-6 text-lg">
-              <Link to="/services">View Services</Link>
-            </Button>
-          </div>
-          
-          <div className="mt-12 flex items-center space-x-8">
-            <div className="flex -space-x-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-gray-200">
-                  <img 
-                    src={`https://picsum.photos/seed/spa-user-${i}/100/100`} 
-                    alt="User" 
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-              ))}
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gray-900">500+ Happy Clients</p>
-              <div className="flex text-spa-gold">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <Star key={i} size={12} fill="currentColor" />
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
+    <section
+      id="hero"
+      className="relative min-h-screen flex items-center justify-center text-center overflow-hidden"
+    >
+      {/* Background */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(ellipse 60% 50% at 50% 40%, rgba(201,168,76,0.12) 0%, transparent 70%),
+            radial-gradient(ellipse 40% 30% at 80% 70%, rgba(201,168,76,0.06) 0%, transparent 60%),
+            linear-gradient(180deg, #0C0C0C 0%, #141008 50%, #0C0C0C 100%)
+          `,
+        }}
+      />
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="relative"
+      {/* Lotus watermark */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+        <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '60vw', maxWidth: 600 }}>
+          <ellipse cx="100" cy="130" rx="70" ry="18" fill="#C9A84C" />
+          <path d="M100 20 C100 20 80 60 80 100 C80 115 90 125 100 130 C110 125 120 115 120 100 C120 60 100 20 100 20Z" fill="#C9A84C" />
+          <path d="M100 40 C100 40 60 65 55 100 C53 115 65 125 80 128 C85 110 88 95 100 80 C112 95 115 110 120 128 C135 125 147 115 145 100 C140 65 100 40 100 40Z" fill="#C9A84C" />
+          <path d="M100 60 C100 60 45 75 38 105 C35 120 50 130 65 130 C75 118 82 105 100 95 C118 105 125 118 135 130 C150 130 165 120 162 105 C155 75 100 60 100 60Z" fill="#C9A84C" />
+        </svg>
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 animate-fade-up px-4">
+        <p className="text-[0.65rem] tracking-[0.35em] uppercase text-gold mb-6">
+          Las Vegas · Facial &amp; Skin Care
+        </p>
+
+        <h1
+          className="font-serif font-light leading-none tracking-[0.05em] text-cream mb-3"
+          style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)' }}
         >
-          <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl aspect-[4/5]">
-            <img 
-              src="https://picsum.photos/seed/spa-treatment/800/1000" 
-              alt="Spa Treatment" 
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-            <div className="absolute bottom-8 left-8 right-8 text-white">
-              <p className="text-sm font-medium uppercase tracking-widest mb-2">Featured Treatment</p>
-              <h3 className="text-2xl font-serif font-bold">Rose & Gold Glow Facial</h3>
-            </div>
-          </div>
-          
-          {/* Decorative elements */}
-          <div className="absolute -top-6 -right-6 w-32 h-32 bg-spa-pink rounded-full -z-10 blur-2xl opacity-50" />
-          <div className="absolute -bottom-10 -left-10 w-48 h-48 border-2 border-spa-gold/30 rounded-full -z-10" />
-        </motion.div>
+          <em className="italic text-gold-light">Cielo</em>
+          <br />
+          Spa
+        </h1>
+
+        <p
+          className="font-serif font-light italic text-text-muted tracking-[0.1em] mt-4 mb-10"
+          style={{ fontSize: 'clamp(1rem, 2vw, 1.4rem)' }}
+        >
+          Where radiant skin begins
+        </p>
+
+        <div className="flex gap-4 justify-center flex-wrap">
+          <Link
+            to="/book"
+            className="inline-block px-10 py-4 bg-gold text-dark text-[0.72rem] tracking-[0.22em] uppercase font-medium no-underline transition-all duration-300 hover:bg-gold-light hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(201,168,76,0.3)]"
+          >
+            Book an Appointment
+          </Link>
+          <Link
+            to="/services"
+            className="inline-block px-10 py-4 border border-gold/40 text-gold-light text-[0.72rem] tracking-[0.22em] uppercase no-underline transition-all duration-300 hover:border-gold hover:bg-gold/5"
+          >
+            Explore Services
+          </Link>
+        </div>
+      </div>
+
+      {/* Scroll indicator */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-muted animate-pulse-slow">
+        <div
+          className="w-px h-10"
+          style={{ background: 'linear-gradient(to bottom, #8A6A2A, transparent)' }}
+        />
+        <span className="text-[0.6rem] tracking-[0.25em] uppercase">Scroll</span>
       </div>
     </section>
   );

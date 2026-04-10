@@ -1,88 +1,102 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Sparkles, Calendar, Home } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'motion/react';
+import { Menu, X } from 'lucide-react';
+
+const navLinks = [
+  { name: 'Services', path: '/services' },
+  { name: 'Specials', path: '/#promo' },
+  { name: 'Reviews', path: '/#testimonials' },
+  { name: 'Contact', path: '/book' },
+];
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navLinks = [
-    { name: 'Home', path: '/', icon: Home },
-    { name: 'Services', path: '/services', icon: Sparkles },
-    { name: 'Book Now', path: '/book', icon: Calendar },
-  ];
-
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-4'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-spa-gold rounded-full flex items-center justify-center text-white">
-              <Sparkles size={20} />
-            </div>
-            <span className="text-2xl font-serif font-bold tracking-tight text-spa-gold">Cielo Spa</span>
-          </Link>
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 md:px-16 py-5 transition-colors duration-300"
+      style={{
+        background: scrolled
+          ? 'rgba(12,12,12,0.97)'
+          : 'linear-gradient(to bottom, rgba(12,12,12,0.95), transparent)',
+      }}
+    >
+      {/* Logo */}
+      <Link
+        to="/"
+        className="font-serif text-2xl font-light tracking-[0.18em] text-gold-light no-underline"
+      >
+        <em>Cielo</em> Spa
+      </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                className={`text-sm font-medium transition-colors hover:text-spa-gold ${location.pathname === link.path ? 'text-spa-gold' : 'text-gray-600'}`}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <Button asChild className="bg-spa-gold hover:bg-spa-gold/90 text-white rounded-full px-6">
-              <Link to="/book">Book Appointment</Link>
-            </Button>
-          </div>
+      {/* Desktop links */}
+      <ul className="hidden md:flex gap-10 list-none">
+        {navLinks.map((link) => (
+          <li key={link.name}>
+            <Link
+              to={link.path}
+              className={`text-[0.75rem] tracking-[0.2em] uppercase no-underline transition-colors duration-300 ${
+                location.pathname === link.path ? 'text-gold-light' : 'text-text-light hover:text-gold-light'
+              }`}
+            >
+              {link.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-gray-600 hover:text-spa-gold transition-colors">
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* Desktop CTA */}
+      <Link
+        to="/book"
+        className="hidden md:inline-block text-[0.7rem] tracking-[0.2em] uppercase text-dark bg-gold px-6 py-3 no-underline font-medium transition-all duration-300 hover:bg-gold-light hover:-translate-y-px"
+      >
+        Book Now
+      </Link>
 
-      {/* Mobile Nav */}
+      {/* Mobile menu button */}
+      <button
+        className="md:hidden text-text-light hover:text-gold-light transition-colors"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        {menuOpen ? <X size={22} /> : <Menu size={22} />}
+      </button>
+
+      {/* Mobile menu */}
       <AnimatePresence>
-        {isOpen && (
+        {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-b border-gray-100 overflow-hidden"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="absolute top-full left-0 right-0 bg-[#0C0C0C] border-b border-gold/10 md:hidden"
           >
-            <div className="px-4 pt-2 pb-6 space-y-1">
+            <div className="px-6 py-6 flex flex-col gap-5">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center space-x-3 px-3 py-3 rounded-lg text-base font-medium text-gray-600 hover:bg-spa-pink/20 hover:text-spa-gold transition-all"
+                  onClick={() => setMenuOpen(false)}
+                  className="text-[0.75rem] tracking-[0.2em] uppercase text-text-light hover:text-gold-light transition-colors no-underline"
                 >
-                  <link.icon size={18} />
-                  <span>{link.name}</span>
+                  {link.name}
                 </Link>
               ))}
-              <div className="pt-4 px-3">
-                <Button asChild className="w-full bg-spa-gold hover:bg-spa-gold/90 text-white rounded-full">
-                  <Link to="/book" onClick={() => setIsOpen(false)}>Book Now</Link>
-                </Button>
-              </div>
+              <Link
+                to="/book"
+                onClick={() => setMenuOpen(false)}
+                className="mt-2 text-center text-[0.7rem] tracking-[0.2em] uppercase text-dark bg-gold px-6 py-3 no-underline font-medium"
+              >
+                Book Now
+              </Link>
             </div>
           </motion.div>
         )}
